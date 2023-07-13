@@ -39,10 +39,13 @@ impl InputManager {
                 (input.2.contains(InputState::Released) && input_helper.key_released(input.0)) ||
                 (input.2.contains(InputState::Pressed) && input_helper.key_pressed(input.0));
 
-            let modifier_state = (input.1.contains(ModifiersState::SHIFT) && input_helper.held_shift()) ||
-                (input.1.contains(ModifiersState::ALT) && input_helper.held_alt()) ||
-                (input.1.contains(ModifiersState::CTRL) && input_helper.held_control()) ||
-                (input.1.contains(ModifiersState::LOGO) && input_helper.key_held(VirtualKeyCode::LWin));
+            let mut modifier_value = ModifiersState::empty();
+            modifier_value.set(ModifiersState::SHIFT, input_helper.held_shift());
+            modifier_value.set(ModifiersState::ALT, input_helper.held_alt());
+            modifier_value.set(ModifiersState::CTRL, input_helper.held_control());
+            modifier_value.set(ModifiersState::LOGO, input_helper.key_held(VirtualKeyCode::LWin) || input_helper.key_held(VirtualKeyCode::RWin));
+
+            let modifier_state = modifier_value.contains(input.1);
 
             return input_state && modifier_state;
         }
