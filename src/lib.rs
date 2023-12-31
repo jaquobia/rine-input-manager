@@ -1,5 +1,5 @@
 use bitflags::bitflags;
-use winit::event::{VirtualKeyCode, ModifiersState};
+use winit::keyboard::{KeyCode, ModifiersState};
 use winit_input_helper::WinitInputHelper;
 use rustc_hash::FxHashMap as HashMap;
 
@@ -13,7 +13,7 @@ bitflags! {
 }
 
 pub struct InputManager {
-    inputs: HashMap<String, (VirtualKeyCode, ModifiersState, InputState)>,
+    inputs: HashMap<String, (KeyCode, ModifiersState, InputState)>,
 }
 
 impl InputManager {
@@ -21,11 +21,11 @@ impl InputManager {
         Self { inputs: HashMap::default() }
     }
 
-    pub fn register_input(&mut self, name: &str, key: VirtualKeyCode, modifiers: ModifiersState, input_state: InputState) {
+    pub fn register_input(&mut self, name: &str, key: KeyCode, modifiers: ModifiersState, input_state: InputState) {
          self.inputs.insert(name.to_string(), (key, modifiers, input_state));
     }
 
-    pub fn set_input(&mut self, name: &str, key: VirtualKeyCode, modifiers: ModifiersState) {
+    pub fn set_input(&mut self, name: &str, key: KeyCode, modifiers: ModifiersState) {
         if let Some(a) = self.inputs.get_mut(name) {
             a.0 = key;
             a.1 = modifiers;
@@ -42,8 +42,8 @@ impl InputManager {
             let mut modifier_value = ModifiersState::empty();
             modifier_value.set(ModifiersState::SHIFT, input_helper.held_shift());
             modifier_value.set(ModifiersState::ALT, input_helper.held_alt());
-            modifier_value.set(ModifiersState::CTRL, input_helper.held_control());
-            modifier_value.set(ModifiersState::LOGO, input_helper.key_held(VirtualKeyCode::LWin) || input_helper.key_held(VirtualKeyCode::RWin));
+            modifier_value.set(ModifiersState::CONTROL, input_helper.held_control());
+            modifier_value.set(ModifiersState::SUPER, input_helper.key_held(KeyCode::SuperLeft) || input_helper.key_held(KeyCode::SuperRight));
 
             let modifier_state = modifier_value.contains(input.1);
 
